@@ -28,7 +28,7 @@ Context for each question is in `docs/IMPLEMENTATION_PLAN.md` section F. Decisio
 - **C5. Re-eval ROM declines count as "ROM deficits" in the assessment draft.**
   Answer: intentional. The clinician enters prior ROM values manually.
 - **C6. All LRs and priors are AI-assisted drafts and unverified.**
-  Answer: continue. The review happens through `docs/evidence-table.csv`; `EVIDENCE_REVIEWED` in `js/engine/meta.js` stays `false` until it is done.
+  Answer: continue. The review happens through `docs/evidence-table.csv`; The clinician reviewed the table and signed it off on 2026-11-10; `EVIDENCE_REVIEWED` in `js/engine/meta.js` is now `true`.
 
 ### Product
 
@@ -42,3 +42,7 @@ Context for each question is in `docs/IMPLEMENTATION_PLAN.md` section F. Decisio
 - **P8. Tiny Node static server instead of `http-server`.** Answer: approved (done in Phase 1).
 - **P9. Remove the student grade calculation from `analyzeRegion`.** Answer: approved (done in Phase 1).
 - **P10. License.** Answer: MIT (done in Phase 1).
+
+## Phase 2 (note form)
+
+- **P11. The dislocation plan prompt never appears.** The prototype shows "dislocations of the elbow, wrist, knee, ankle, and hip are stabilized and referred..." only when a checked finding's *id* contains "disloc". In those five regions, suspected dislocation is recorded under the red flag `rf_deform` (e.g., "Gross deformity or suspected elbow dislocation"), whose id doesn't match, so the prompt can't fire. The only "disloc" ids are in the shoulder, which isn't in the prompt's region list. Ported unchanged (`js/engine/plan-prompts.js`). Options: (a) leave it; (b) fire the prompt when `rf_deform` is checked in those five regions; (c) add a separate "suspected dislocation" red flag to each region. The red-flag prompt already fires for `rf_deform` either way.

@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (Phase 2: note form and live differential)
+- Note screen (`index.html`, `css/app.css`, `js/ui/*`, `js/main.js`): Encounter, Subjective (with the re-evaluation block), Objective (engine sections, notes boxes, ROM and MMT tables with flags, custom rows, prior columns, editable thresholds), live differential panel, Assessment (impression, confidence, also-considering, auto-draft with edit lock and Redraft), and Plan (prompts, status, restrictions, treatment, therex, referral with reasons, communication, follow-up). Two-click New note and a warning before leaving a page with input.
+- Same element ids and behavior as the prototype; the note lives only in memory (`js/ui/note.js`). Student mode removed. Grade is free text. "Coaching notes" renamed "Clinical reasoning notes". The live red-flag alert and plan prompts use Settings wording. Evaluation date and time default to now. Video links open in a new tab (`noopener noreferrer`) with an internet-connection note.
+- Placeholder Settings (`js/settings/defaults.js`, `store.js`): generic default lists (therex ships empty) until Phase 3.
+- `js/output/assessment-draft.js` (the prototype's draftA on a note snapshot) and `js/output/format.js`.
+- Fixed a prototype display bug: the `hidden` attribute didn't hide form fields, so "Name the diagnosis" and referral reasons were always visible.
+- Evidence sign-off: `EVIDENCE_REVIEWED` set to `true` after clinician review of `docs/evidence-table.csv`.
+- Tests (54 passing): the two fixture cases, each region's example, and a two-region red-flag case are entered in both the prototype and the new app; the differential panel, ROM/MMT flags and highlighted cells, assessment draft, plan prompts, and impression lists must match. Plus behavior tests (red-flag screen exclusivity, re-eval columns, thresholds, custom rows, draft lock and Redraft, Other impression, evidence and video links, next-test jump, referral reasons, New note, leave warning, 360px layout).
+- Logged question P11: the prototype's dislocation plan prompt can never fire.
+
+## Unreleased (between Phases 1 and 2)
 - Recorded the clinician's answers to the Phase 0 questions in docs/QUESTIONS.md. C2 (Wainner cluster wording): keep both versions as coded. No engine changes.
 - SPEC updated to match: evaluation time defaults to now and prints in the EMR header; evaluator line is "{Name}, {Credentials}"; referral label includes the physician name when set; therex list ships empty; the live red-flag alert uses the Settings prompt text; video links carry an internet-connection note; student grade calculation removed from the engine.
 - `pdfjs-dist` approved as a dev-only dependency for the Phase 5 PDF test.
