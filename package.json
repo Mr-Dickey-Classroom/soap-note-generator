@@ -1,0 +1,16 @@
+{
+  "name": "soap-note-generator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline-capable SOAP note generator for athletic trainers (static PWA, no build step).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "serve": "node tests/support/server.mjs",
+    "evidence": "node scripts/evidence-table.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Engine test harness</title>
+<script src="serialize.js"></script>
+<script type="module">
+  import * as engine from '../../js/engine/engine.js';
+  import * as registry from '../../js/engine/registry.js';
+  import * as measures from '../../js/engine/measures.js';
+  import * as evidence from '../../js/engine/evidence.js';
+  import * as context from '../../js/engine/context.js';
+  import { SRC } from '../../js/engine/sources.js';
+  import { VIDEOS } from '../../js/engine/videos.js';
+  import { planPrompts } from '../../js/engine/plan-prompts.js';
+  window.__engine = { engine, registry, measures, evidence, context, SRC, VIDEOS, planPrompts };
+  window.__ready = true;
+</script>
+</head>
+<body><p>Engine test harness (not part of the app).</p></body>
+</html>

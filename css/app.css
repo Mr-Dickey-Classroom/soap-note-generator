@@ -1,0 +1,15 @@
+/* App styles. Theme tokens become Settings-driven in Phase 3. */
+:root{
+  --brand:#006428;
+  --brand-ink:#ffffff;
+  --accent:#F0DC3C;
+  --bg:#ffffff;
+  --ink:#1b1f1d;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#121614; --ink:#e7ece9; }
+}
+body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.placeholder{ max-width:40rem; margin:0 auto; padding:2rem 16px; }
+.placeholder h1{ color:var(--ink); border-bottom:4px solid var(--accent); padding-bottom:.25rem; }
