@@ -26,7 +26,7 @@ The header shows the user's logo (if set), the app title (setting), and buttons 
 Port everything below from `reference/soap-note-generator-v8.html` with the same behavior:
 
 **Encounter**
-- Athlete name, DOB (age calculated), grade or class year (free text; was a 6–12 select), sport, date of injury, date and time of evaluation (default now), encounter type (Initial evaluation / Re-evaluation / Sideline evaluation), ICD-10 (optional), evaluator (default from Settings).
+- Athlete name, DOB (age calculated), grade or class year (free text; was a 6–12 select), sport, date of injury, date and time of evaluation (default now; the time prints in the EMR header and the PDF), encounter type (Initial evaluation / Re-evaluation / Sideline evaluation), ICD-10 (optional), evaluator (default from Settings).
 - Primary body region plus optional secondary region (8 regions: cervical, shoulder, elbow, wrist/hand, lumbar, hip, knee, ankle/foot). Involved side: L / R / Bilateral / Midline.
 
 **Subjective**
@@ -35,7 +35,7 @@ Port everything below from `reference/soap-note-generator-v8.html` with the same
 - **Re-evaluation block** (only when encounter = Re-evaluation): date of last eval, diagnosis at last eval, visit number, overall status (Improving / No change / Worsening / Resolved), home program adherence, response to treatment and interval history.
 
 **Objective**
-- Engine observation, palpation (Not done / Tender / Not tender), ROM-and-strength findings, special tests, neuro screen per region, each with an "Evidence" disclosure (Sn/Sp/LR/source) and an optional video link.
+- Engine observation, palpation (Not done / Tender / Not tender), ROM-and-strength findings, special tests, neuro screen per region, each with an "Evidence" disclosure (Sn/Sp/LR/source) and an optional video link. Video links open in a new tab (`rel="noopener noreferrer"`) and carry a note that watching videos needs an internet connection; nothing is fetched until the user clicks.
 - Free-text notes boxes: observation, palpation, special tests/neuro. Plus a gross movement pattern box.
 - **ROM table** per region: motion, editable WNL (AAOS defaults), AROM L/R, PROM L/R, end-feel, pain, flags. Spine flexion/extension take a single measurement. **3 blank custom rows** per region plus "Add ROM row".
   - Flags: below WNL by more than X% (default 10), below the uninvolved side by more than Y% (default 10), 0° norms flagged in degrees ("lacks 8°"), PROM exceeds AROM by ≥10°, above WNL by >115% (warn). Thresholds are editable on the form, with defaults from Settings.
@@ -43,7 +43,7 @@ Port everything below from `reference/soap-note-generator-v8.html` with the same
 - **MMT table**: 0–5 with +/−, L/R, pain, flags (grade < 5, involved weaker than uninvolved), 2 custom rows plus "Add strength row", and a re-eval Prior column.
 
 **Live differential panel** (updates as you type)
-- Red-flag alert, a plan pointer for the chosen impression, a ranked ladder with support bands and tags (Your impression / Also considering / Needs confirmation / Rule out), cluster and CPR readouts, "Tests that would sharpen this" (click to scroll to and flash the test), conditions set aside by history, clinical reasoning notes (rename "Coaching notes"), and measurement flags.
+- Red-flag alert (its wording is the red-flag prompt text from Settings), a plan pointer for the chosen impression, a ranked ladder with support bands and tags (Your impression / Also considering / Needs confirmation / Rule out), cluster and CPR readouts, "Tests that would sharpen this" (click to scroll to and flash the test), conditions set aside by history, clinical reasoning notes (rename "Coaching notes"), and measurement flags.
 - **Remove** the student-mode star rating and component scores.
 
 **Assessment**
@@ -88,7 +88,7 @@ Port the prototype's output panel exactly, generalized:
 |---|---|
 | Branding | App title ("SOAP Note Generator"); organization name (blank); program/department line ("Sports Medicine"); **logo upload** (PNG/JPG/SVG → stored as a PNG data URL, resized to ≤ 512 px longest side, ≤ 300 KB, with preview and remove); **brand color** (#006428); **accent color** (#F0DC3C); light/dark/system theme |
 | Clinician | Name, credentials ("MS, LAT, ATC" style, free text), license number (optional, prints under the signature) |
-| Clinical | WNL thresholds (10% / 10%); ROM norm overrides per region/motion (optional, with reset); directing/team physician name (used in the referral list as "Directing physician (Dr. X)"); referral destinations, referral reasons (physician and PT), treatments, therapeutic exercise programs, and communication checklist items, each an editable list with add/remove/reorder and reset to defaults |
+| Clinical | WNL thresholds (10% / 10%); ROM norm overrides per region/motion (optional, with reset); directing/team physician name (used in the referral list as "Directing physician (Dr. X)"); referral destinations, referral reasons (physician and PT), treatments, therapeutic exercise programs (ships empty), and communication checklist items, each an editable list with add/remove/reorder and reset to defaults |
 | Plan prompts | Toggle plus editable text for: red-flag/EAP prompt; immediate-referral prompt for dislocations; notify-physician-on-referral prompt |
 | EMR output | EMR name ("Healthy Roster"); character limit (5000); default format (Markdown); default length (Condensed); include negatives by default (off); PDF-pointer line text |
 | PDF | Paper size (Letter); filename pattern; footer confidentiality text ("Confidential health record. Do not redisclose without authorization."); show signature line (on) |
@@ -120,7 +120,10 @@ Port the prototype's output panel exactly, generalized:
 5. Grade becomes free text.
 6. "Coaching notes" is renamed "Clinical reasoning notes".
 7. The CDN script is removed; all dependencies are vendored for offline use.
-8. Evaluator name in the text output comes from Settings (fixtures use "Jane Clinician, MS, LAT, ATC").
+8. Evaluator name in the text output comes from Settings as "{Name}, {Credentials}", editable per note (fixtures use "Jane Clinician, MS, LAT, ATC").
+9. Evaluation time defaults to now and prints in the EMR header ("Date: 11/5/2026 3:15 PM"). The fixtures were captured without a time, so fixture tests clear it.
+10. When a directing physician name is set, the referral destination reads "Directing physician (Dr. X)". Fixture tests leave the name blank.
+11. The student grade calculation is removed from the engine, not just hidden.
 
 ## 10. Evidence review deliverable
 

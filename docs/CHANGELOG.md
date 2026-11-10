@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- Recorded the clinician's answers to the Phase 0 questions in docs/QUESTIONS.md. C2 (Wainner cluster wording) stays open; the engine is unchanged.
+- SPEC updated to match: evaluation time defaults to now and prints in the EMR header; evaluator line is "{Name}, {Credentials}"; referral label includes the physician name when set; therex list ships empty; the live red-flag alert uses the Settings prompt text; video links carry an internet-connection note; student grade calculation removed from the engine.
+- `pdfjs-dist` approved as a dev-only dependency for the Phase 5 PDF test.
+
 ## 0.1.0 (Phase 1: scaffold, engine port, parity tests)
 - Scaffold: folder layout from CLAUDE.md, `package.json` (dev-only `@playwright/test` 1.63.0), `.gitignore`, MIT `LICENSE`, placeholder `index.html` with the SPEC §8 CSP, minimal `css/app.css`.
 - Static server: `tests/support/server.mjs` (Node built-ins only) instead of `http-server`; `npm run serve` previews at http://127.0.0.1:4173/.
