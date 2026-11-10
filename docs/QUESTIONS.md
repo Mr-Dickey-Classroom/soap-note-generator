@@ -2,7 +2,7 @@
 
 Claude Code adds clinical or product questions here instead of changing engine behavior.
 
-## Phase 0 (implementation plan): answered 2026-11-10
+## Phase 0 (implementation plan): all answered 2026-11-10
 
 Context for each question is in `docs/IMPLEMENTATION_PLAN.md` section F. Decisions below are the clinician's; the SPEC is updated to match.
 
@@ -20,7 +20,7 @@ Context for each question is in `docs/IMPLEMENTATION_PLAN.md` section F. Decisio
   | Neurological signs | Numbness, "pins and needles," or weakness in specific dermatomes/myotomes (e.g., thumb, index finger, biceps/triceps) | Mechanical weakness or pain primarily tied to moving the shoulder joint (lifting, reaching overhead, rotating) |
   | Aggravating movements | Neck extension, rotation, or looking to the side | Direct shoulder movements (overhead reach, sleeping on the affected side, internal/external rotation) |
 
-  Status: **engine unchanged; open.** It is not yet decided whether the two readouts' wording or condition lists should change. Confirm "keep as is" or name the change.
+  Answer: keep both as they are. The shoulder version's broader condition list and "Refer." wording fit its job of flagging neck-driven pain; the cervical version stays as coded. No change.
 - **C3. The Lowery meniscal composite and the pars screen always show a readout once their condition is a candidate.**
   Answer: intentional. No change.
 - **C4. "Screened: no red flags" suppresses the hip non-musculoskeletal groin pain prompt and the elbow olecranon-bursa infection prompt.**

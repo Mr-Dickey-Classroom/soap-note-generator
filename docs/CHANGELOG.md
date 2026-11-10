@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- Recorded the clinician's answers to the Phase 0 questions in docs/QUESTIONS.md. C2 (Wainner cluster wording) stays open; the engine is unchanged.
+- Recorded the clinician's answers to the Phase 0 questions in docs/QUESTIONS.md. C2 (Wainner cluster wording): keep both versions as coded. No engine changes.
 - SPEC updated to match: evaluation time defaults to now and prints in the EMR header; evaluator line is "{Name}, {Credentials}"; referral label includes the physician name when set; therex list ships empty; the live red-flag alert uses the Settings prompt text; video links carry an internet-connection note; student grade calculation removed from the engine.
 - `pdfjs-dist` approved as a dev-only dependency for the Phase 5 PDF test.
 
