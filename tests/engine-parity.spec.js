@@ -52,19 +52,32 @@ function runEngineBatch(page, cases){
       const errors = [];
       const AS = c.regions.map(k => engine.analyzeRegion(k, c.D, { state: c.states[k], side: c.side, onError: e => errors.push(String(e)) }));
       const lists = c.regions.map(k => ['rf', 'h', 'o', 'p', 'r', 't', 'n'].map(s => engine.findingLists(k, c.states[k], [s])));
-      const prompts = planPrompts(AS, c.states, { referral: c.referral ? 'referral' : '' }).map(p => p.tone);
-      return { AS: AS.map(__serializeAnalysis), lists, prompts, errors };
+      const P = planPrompts(AS, c.states, { referral: c.referral ? 'referral' : '' });
+      const prompts = P.map(p => p.tone), promptKeys = P.map(p => p.key);
+      return { AS: AS.map(__serializeAnalysis), lists, prompts, promptKeys, errors };
     });
   }, cases);
 }
 
+// The one intended difference (SPEC §9.12, QUESTIONS P11): the dislocation
+// prompt also fires on rf_deform in these regions. The prototype never fired it.
+const DISLOCATION_REGIONS = ['elbow', 'wrist', 'knee', 'ankle', 'hip'];
+const protoDislocation = c => c.regions.some(k => DISLOCATION_REGIONS.includes(k) && Object.keys(c.states[k] || {}).some(f => /disloc/.test(f) && c.states[k][f]));
+const deformDislocation = c => c.regions.some(k => DISLOCATION_REGIONS.includes(k) && (c.states[k] || {}).rf_deform);
+
 function compareBatches(proto, mine, cases){
   for (let i = 0; i < cases.length; i++){
-    const where = `case ${i}: ${JSON.stringify(cases[i]).slice(0, 300)}`;
+    const c = cases[i];
+    const where = `case ${i}: ${JSON.stringify(c).slice(0, 300)}`;
     expect(mine[i].errors, where).toEqual([]);
     expect(mine[i].AS, where).toEqual(proto[i].AS);
     expect(mine[i].lists, where).toEqual(proto[i].lists);
-    expect(mine[i].prompts, where).toEqual(proto[i].prompts);
+    // Dislocation prompt fires exactly when a "disloc" id or the deformity flag is checked in those regions.
+    expect(mine[i].promptKeys.includes('dislocation'), where).toBe(protoDislocation(c) || deformDislocation(c));
+    // Every other prompt matches the prototype exactly.
+    let tones = mine[i].prompts;
+    if (!protoDislocation(c) && deformDislocation(c)) tones = tones.filter((t, j) => mine[i].promptKeys[j] !== 'dislocation');
+    expect(tones, where).toEqual(proto[i].prompts);
   }
 }
 

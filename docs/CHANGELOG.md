@@ -8,7 +8,7 @@
 - Fixed a prototype display bug: the `hidden` attribute didn't hide form fields, so "Name the diagnosis" and referral reasons were always visible.
 - Evidence sign-off: `EVIDENCE_REVIEWED` set to `true` after clinician review of `docs/evidence-table.csv`.
 - Tests (54 passing): the two fixture cases, each region's example, and a two-region red-flag case are entered in both the prototype and the new app; the differential panel, ROM/MMT flags and highlighted cells, assessment draft, plan prompts, and impression lists must match. Plus behavior tests (red-flag screen exclusivity, re-eval columns, thresholds, custom rows, draft lock and Redraft, Other impression, evidence and video links, next-test jump, referral reasons, New note, leave warning, 360px layout).
-- Logged question P11: the prototype's dislocation plan prompt can never fire.
+- P11 (clinician decision): the dislocation plan prompt now fires when the deformity/dislocation red flag is checked in the elbow, wrist, knee, ankle, or hip. The prototype's version never fired. Parity tests allow exactly this difference.
 
 ## Unreleased (between Phases 1 and 2)
 - Recorded the clinician's answers to the Phase 0 questions in docs/QUESTIONS.md. C2 (Wainner cluster wording): keep both versions as coded. No engine changes.

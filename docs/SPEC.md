@@ -124,6 +124,7 @@ Port the prototype's output panel exactly, generalized:
 9. Evaluation time defaults to now and prints in the EMR header ("Date: 11/5/2026 3:15 PM"). The fixtures were captured without a time, so fixture tests clear it.
 10. When a directing physician name is set, the referral destination reads "Directing physician (Dr. X)". Fixture tests leave the name blank.
 11. The student grade calculation is removed from the engine, not just hidden.
+12. The dislocation plan prompt fires when the deformity/dislocation red flag is checked in the elbow, wrist, knee, ankle, or hip. (The prototype's prompt looked for "disloc" in finding ids and never fired.)
 
 ## 10. Evidence review deliverable
 

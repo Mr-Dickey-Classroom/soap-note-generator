@@ -203,6 +203,14 @@ test.describe('note screen behavior', () => {
     await expect(page.locator(`[data-row="${target}"]`)).toHaveClass(/flash/);
   });
 
+  test('the deformity/dislocation red flag adds the dislocation prompt (P11)', async ({ page }) => {
+    await page.selectOption('#e_region', 'knee');
+    await page.locator('input[data-reg="knee"][data-fid="rf_nv"]').check();
+    await expect(page.locator('#p_suggest .alert.bad')).toHaveText([DEFAULTS.prompts.redFlag.text]);
+    await page.locator('input[data-reg="knee"][data-fid="rf_deform"]').check();
+    await expect(page.locator('#p_suggest .alert.bad')).toHaveText([DEFAULTS.prompts.redFlag.text, DEFAULTS.prompts.dislocation.text]);
+  });
+
   test('referral reasons follow the destination and add the plan prompt', async ({ page }) => {
     await page.selectOption('#e_region', 'ankle');
     await expect(page.locator('#p_reasons_wrap')).toBeHidden();
