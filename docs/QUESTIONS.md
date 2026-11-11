@@ -2,26 +2,48 @@
 
 Claude Code adds clinical or product questions here instead of changing engine behavior.
 
-## Phase 0 (implementation plan)
+## Phase 0 (implementation plan): all answered 2026-11-10
 
-See `docs/IMPLEMENTATION_PLAN.md` section F for context.
+Context for each question is in `docs/IMPLEMENTATION_PLAN.md` section F. Decisions below are the clinician's; the SPEC is updated to match.
 
-**Clinical** (engine left unchanged; for the clinician to decide):
-- C1. Priors are documented as "log-odds offset for a high school athlete population". The SPEC also targets colleges. Is that acceptable, or should priors vary by setting?
-- C2. The Wainner cluster differs between regions. The shoulder version has `cond` including `tos`, says "Refer." at 4/4, and gives post-test probabilities. The cervical version gives only the +LR. Intentional?
-- C3. The Lowery meniscal composite and the pars screen always return a readout once their condition is a candidate (e.g., "0 of 5 composite findings positive" before anything is tested). Intentional?
-- C4. Checking "Screened: no red flags" suppresses the hip "non-musculoskeletal groin pain" prompt and the elbow olecranon-bursa infection prompt. Intentional?
-- C5. Re-eval ROM declines (`romChange` 'bad') are counted as "ROM deficits" in the assessment draft. Intentional?
-- C6. All LRs and priors are AI-assisted drafts and unverified (SPEC §10). The review happens via `docs/evidence-table.csv`.
+### Clinical
 
-**Product:**
-- P1. The SPEC says evaluation time defaults to now, but the prototype leaves it blank, and when set it prints in the EMR header ("Date: 11/5/2026 3:15 PM"). Should the default-now time appear in the EMR text?
-- P2. Evaluator line format: is it "{Name}, {Credentials}" from Settings, still overridable per note?
-- P3. The referral label becomes "Directing physician (Dr. X)" when a physician name is set. That changes the EMR text versus the fixtures. Is that OK, with the fixtures run with the name blank?
-- P4. The default therex list in the prototype is program-specific. Should it ship empty or with generic examples?
-- P5. Should the live-panel red-flag alert reuse the Settings red-flag prompt text?
-- P6. Test video links open YouTube in a new tab when clicked. They're user-initiated with no data sent, but they don't work offline. Keep them, with `rel="noopener noreferrer"`?
-- P7. Verifying selectable PDF text needs a parser, since pdfmake's embedded-font text isn't plain in the file. Is it OK to add `pdfjs-dist` as a **dev-only** dependency in Phase 5?
-- P8. Is it OK to use a tiny Node static server in place of `http-server`? That means one fewer dev dependency.
-- P9. Remove the student grading calculation from `analyzeRegion` entirely (my plan), rather than computing it and not displaying it?
-- P10. License: MIT, as suggested in START-HERE?
+- **C1. Priors are set for a high school athlete population; the SPEC also targets colleges.**
+  Answer: acceptable as is. Priors stay the same for every setting.
+- **C2. The Wainner cluster differs between the shoulder and cervical regions** (the shoulder version includes `tos` in `cond`, says "Refer." at 4/4, and gives post-test probabilities; the cervical version gives only the +LR).
+  Clinician guidance: in the shoulder region the cluster is there to separate neck-driven pain from true shoulder pathology:
+
+  | Feature | Cervical radiculopathy (neck-driven) | True shoulder pathology (e.g., rotator cuff, labrum) |
+  |---|---|---|
+  | Wainner cluster results | 3 to 4 positive tests (reproduction or relief with neck/nerve maneuvers) | Negative Wainner cluster |
+  | Primary location of pain | Deep in the back/side of the neck, shooting or "electric" pain down the arm, sometimes past the elbow into the hand | Top, front, or lateral side of the shoulder joint; rarely shoots past the elbow |
+  | Neurological signs | Numbness, "pins and needles," or weakness in specific dermatomes/myotomes (e.g., thumb, index finger, biceps/triceps) | Mechanical weakness or pain primarily tied to moving the shoulder joint (lifting, reaching overhead, rotating) |
+  | Aggravating movements | Neck extension, rotation, or looking to the side | Direct shoulder movements (overhead reach, sleeping on the affected side, internal/external rotation) |
+
+  Answer: keep both as they are. The shoulder version's broader condition list and "Refer." wording fit its job of flagging neck-driven pain; the cervical version stays as coded. No change.
+- **C3. The Lowery meniscal composite and the pars screen always show a readout once their condition is a candidate.**
+  Answer: intentional. No change.
+- **C4. "Screened: no red flags" suppresses the hip non-musculoskeletal groin pain prompt and the elbow olecranon-bursa infection prompt.**
+  Answer: intentional. No change.
+- **C5. Re-eval ROM declines count as "ROM deficits" in the assessment draft.**
+  Answer: intentional. The clinician enters prior ROM values manually.
+- **C6. All LRs and priors are AI-assisted drafts and unverified.**
+  Answer: continue. The review happens through `docs/evidence-table.csv`; The clinician reviewed the table and signed it off on 2026-11-10; `EVIDENCE_REVIEWED` in `js/engine/meta.js` is now `true`.
+
+### Product
+
+- **P1. Default evaluation time.** Answer: the time defaults to now and prints in the EMR header (e.g., "Date: 11/5/2026 3:15 PM"). Fixture tests clear the time, because the fixtures were captured without one. (SPEC §3, §9.9)
+- **P2. Evaluator line.** Answer: "{Name}, {Credentials}" from Settings, editable per note. (SPEC §9.8)
+- **P3. Referral label with a physician name.** Answer: yes, "Directing physician (Dr. X)" when a name is set; fixture tests leave the name blank. (SPEC §9.10)
+- **P4. Default therapeutic exercise list.** Answer: ships empty. (SPEC §6)
+- **P5. Live-panel red-flag alert text.** Answer: reuses the Settings red-flag prompt text. (SPEC §3)
+- **P6. Test video links.** Answer: keep them, opening in a new tab with `rel="noopener noreferrer"`, and show a note that watching videos needs an internet connection. (SPEC §3)
+- **P7. `pdfjs-dist` as a dev-only test dependency in Phase 5.** Answer: approved.
+- **P8. Tiny Node static server instead of `http-server`.** Answer: approved (done in Phase 1).
+- **P9. Remove the student grade calculation from `analyzeRegion`.** Answer: approved (done in Phase 1).
+- **P10. License.** Answer: MIT (done in Phase 1).
+
+## Phase 2 (note form)
+
+- **P11. The dislocation plan prompt never appears.** The prototype shows "dislocations of the elbow, wrist, knee, ankle, and hip are stabilized and referred..." only when a checked finding's *id* contains "disloc". In those five regions, suspected dislocation is recorded under the red flag `rf_deform` (e.g., "Gross deformity or suspected elbow dislocation"), whose id doesn't match, so the prompt can't fire. The only "disloc" ids are in the shoulder, which isn't in the prompt's region list. Ported unchanged (`js/engine/plan-prompts.js`). Options: (a) leave it; (b) fire the prompt when `rf_deform` is checked in those five regions; (c) add a separate "suspected dislocation" red flag to each region. The red-flag prompt already fires for `rf_deform` either way.
+  Answer (2026-11-11): (b) fire the dislocation prompt when `rf_deform` is checked in the elbow, wrist, knee, ankle, or hip. Done in `js/engine/plan-prompts.js`; SPEC §9.12.

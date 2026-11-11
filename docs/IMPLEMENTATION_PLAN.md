@@ -104,7 +104,7 @@ The output functions take the plain `note` object, not the DOM. That makes them 
 
 **5. Panel parity (Phase 2).** Compare the `#live` text content of the prototype and the new app for the region examples, normalizing "Coaching notes" → "Clinical reasoning notes", the Settings-driven red-flag wording, and the removed star block.
 
-**6. PDF (Phase 5) and offline (Phase 6)** as in CLAUDE.md. The PDF has a `%PDF-` header and `%%EOF`, the logo appears as an `/Subtype /Image` XObject when set, and the text is extractable (see question P7 on tooling).
+**6. PDF (Phase 5) and offline (Phase 6)** as in CLAUDE.md. The PDF has a `%PDF-` header and `%%EOF`, the logo appears as an `/Subtype /Image` XObject when set, and the text is extractable (parsed with `pdfjs-dist` as a dev-only dependency, approved in P7).
 
 **7. Evidence table.** `scripts/evidence-table.mjs` generates `docs/evidence-table.csv` from the registry. A test regenerates it and fails if the committed file is stale.
 

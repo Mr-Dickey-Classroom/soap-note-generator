@@ -10,4 +10,4 @@ export const ENGINE_SOURCE = 'reference/soap-note-generator-v8.html';
  * docs/evidence-table.csv. While false, the About screen shows
  * "Evidence values under review" (docs/SPEC.md §10).
  */
-export const EVIDENCE_REVIEWED = false;
+export const EVIDENCE_REVIEWED = true; // clinician sign-off on docs/evidence-table.csv, 2026-11-10

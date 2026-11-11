@@ -67,6 +67,14 @@ test('measure flags and helpers take their context as arguments', () => {
   expect(evidenceFor('knee', 't_lachman')[0]).toMatchObject({ source:'BENJ06', se:0.85, sp:0.94 });
 });
 
+test('dislocation prompt fires on the deformity red flag in the five listed regions only (P11)', () => {
+  const D = { raw:'', rk:'', id:'', other:'', conf:'', secondary:[] };
+  const keys = (k, state) => planPrompts([analyzeRegion(k, D, { state })], { [k]: state }).map(p => p.key);
+  for (const k of ['elbow', 'wrist', 'knee', 'ankle', 'hip']) expect(keys(k, { rf_deform:true }).slice(0, 2), k).toEqual(['redFlag', 'dislocation']);
+  expect(keys('shoulder', { rf_deform:true })).not.toContain('dislocation');
+  expect(keys('knee', { rf_nv:true })).not.toContain('dislocation');
+});
+
 test('docs/evidence-table.csv is up to date with the engine data', () => {
   expect(fs.readFileSync(CSV_PATH, 'utf8')).toBe(buildEvidenceCsv());
 });

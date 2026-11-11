@@ -2,16 +2,178 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<meta name="description" content="Document an athletic training injury evaluation in SOAP format with a live, evidence-based differential.">
 <title>SOAP Note Generator</title>
 <link rel="stylesheet" href="css/app.css">
+<script type="module" src="js/main.js"></script>
 </head>
 <body>
-<main class="placeholder">
-  <h1>SOAP Note Generator</h1>
-  <p>Under construction. The note form arrives in a later build phase.</p>
-  <p>Clinical decision support for certified athletic trainers. It does not replace the clinician's evaluation.</p>
+<header class="mast"><div class="mast-in">
+  <div>
+    <h1 id="appTitle">SOAP Note Generator</h1>
+    <p><span id="programLine">Sports Medicine</span>. Document the evaluation and let the differential build alongside you.</p>
+  </div>
+  <div class="mast-actions">
+    <button class="btn ghost" type="button" data-action="clear" id="clearBtn">New note</button>
+  </div>
+</div></header>
+
+<nav class="nav" aria-label="Note sections"><div class="nav-in">
+  <a href="#enc">Encounter</a><a href="#S">S</a><a href="#O">O</a><a href="#A">A</a><a href="#P">P</a>
+  <span class="sp"></span><span class="pv">Nothing is saved. Reloading clears the note.</span>
+</div></nav>
+
+<div class="app">
+<main>
+  <section class="soap" id="enc" aria-labelledby="enc_h">
+    <header><div><h2 id="enc_h">Encounter</h2><p>Who, when, and which body region. The region loads its history items, special tests, ROM, and strength tables.</p></div></header>
+    <div class="fields">
+      <label class="f w2">Athlete name<input id="e_name" autocomplete="off"></label>
+      <label class="f">Date of birth<input type="date" id="e_dob"></label>
+      <label class="f">Grade or class year<input id="e_grade" autocomplete="off"></label>
+      <label class="f">Sport<input id="e_sport" autocomplete="off"></label>
+      <label class="f">Date of injury<input type="date" id="e_doi"></label>
+      <label class="f">Date of evaluation<input type="date" id="e_doe"></label>
+      <label class="f">Time<input type="time" id="e_time"></label>
+      <label class="f">Encounter<select id="e_type"><option>Initial evaluation</option><option>Re-evaluation</option><option>Sideline evaluation</option></select></label>
+      <label class="f">ICD-10 (optional)<input id="e_icd" autocomplete="off"></label>
+      <label class="f w2">Evaluator<input id="e_eval" autocomplete="off"></label>
+    </div>
+    <div class="fields">
+      <label class="f">Body region<select id="e_region"></select></label>
+      <label class="f">Secondary region (optional)<select id="e_region2"></select></label>
+      <fieldset class="f w2"><legend>Involved side</legend>
+        <div class="seg" role="radiogroup" aria-label="Involved side">
+          <input type="radio" name="side" id="sd_L" value="L"><label for="sd_L">Left</label>
+          <input type="radio" name="side" id="sd_R" value="R"><label for="sd_R">Right</label>
+          <input type="radio" name="side" id="sd_B" value="B"><label for="sd_B">Bilateral</label>
+          <input type="radio" name="side" id="sd_M" value="M"><label for="sd_M">Midline</label>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <section class="soap" id="S" aria-labelledby="S_h">
+    <header><span class="letter" aria-hidden="true">S</span><div><h2 id="S_h">Subjective</h2><p>Your narrative prints as written. The history checkboxes below are what the differential engine reads.</p></div></header>
+    <div id="reeval" class="reeval" hidden>
+      <h3 class="rtitle">Since the last evaluation</h3>
+      <div class="fields">
+        <label class="f">Date of last evaluation<input type="date" id="r_last"></label>
+        <label class="f w2">Diagnosis at last evaluation<input id="r_dx" autocomplete="off"></label>
+        <label class="f">Visit number<input id="r_visit" inputmode="numeric" autocomplete="off"></label>
+      </div>
+      <div class="fields">
+        <fieldset class="f w2"><legend>Overall status</legend>
+          <div class="seg" role="radiogroup" aria-label="Overall status">
+            <input type="radio" name="rstat" id="rs_i" value="Improving"><label for="rs_i">Improving</label>
+            <input type="radio" name="rstat" id="rs_n" value="No change"><label for="rs_n">No change</label>
+            <input type="radio" name="rstat" id="rs_w" value="Worsening"><label for="rs_w">Worsening</label>
+            <input type="radio" name="rstat" id="rs_r" value="Resolved"><label for="rs_r">Resolved</label>
+          </div>
+        </fieldset>
+        <fieldset class="f w2"><legend>Home program adherence</legend>
+          <div class="seg" role="radiogroup" aria-label="Home program adherence">
+            <input type="radio" name="radh" id="ra_y" value="Full"><label for="ra_y">Full</label>
+            <input type="radio" name="radh" id="ra_p" value="Partial"><label for="ra_p">Partial</label>
+            <input type="radio" name="radh" id="ra_n" value="None"><label for="ra_n">None</label>
+            <input type="radio" name="radh" id="ra_x" value="Not assigned"><label for="ra_x">Not assigned</label>
+          </div>
+        </fieldset>
+      </div>
+      <label class="f full">Response to treatment and changes since last visit<textarea id="r_resp" rows="2"></textarea></label>
+      <p class="note-s">ROM and strength tables now show a <b>Prior</b> column for the involved side. Enter last visit's values to get the change.</p>
+    </div>
+    <label class="f full">Chief complaint<input id="s_cc" autocomplete="off"></label>
+    <label class="f full">History of present injury and mechanism<textarea id="s_hpi" rows="4"></textarea></label>
+    <div class="fields">
+      <fieldset class="f w2"><legend>Onset</legend>
+        <div class="seg" role="radiogroup" aria-label="Onset">
+          <input type="radio" name="onset" id="on_a" value="Acute"><label for="on_a">Acute</label>
+          <input type="radio" name="onset" id="on_i" value="Insidious"><label for="on_i">Insidious</label>
+          <input type="radio" name="onset" id="on_r" value="Recurrent"><label for="on_r">Recurrent</label>
+          <input type="radio" name="onset" id="on_c" value="Chronic, flare"><label for="on_c">Chronic flare</label>
+        </div>
+      </fieldset>
+      <label class="f">Pain now (0–10)<select id="s_pnow" class="pain"></select></label>
+      <label class="f">Pain at best<select id="s_pbest" class="pain"></select></label>
+      <label class="f">Pain at worst<select id="s_pworst" class="pain"></select></label>
+    </div>
+    <fieldset class="f full"><legend>Pain quality</legend>
+      <div class="chips" id="s_quality"></div>
+    </fieldset>
+    <div class="fields two">
+      <label class="f">Aggravating factors<textarea id="s_agg" rows="2"></textarea></label>
+      <label class="f">Easing factors<textarea id="s_ease" rows="2"></textarea></label>
+      <label class="f">Prior injury and medical history<textarea id="s_prior" rows="2"></textarea></label>
+      <label class="f">Functional limitations and athlete goals<textarea id="s_func" rows="2"></textarea></label>
+    </div>
+    <div id="s_engine"></div>
+  </section>
+
+  <section class="soap" id="O" aria-labelledby="O_h">
+    <header><span class="letter" aria-hidden="true">O</span><div><h2 id="O_h">Objective</h2><p>Leave anything you didn't assess at "Not done." Documented negatives count as evidence. Video links open YouTube in a new tab and need an internet connection.</p></div></header>
+    <div class="thr">
+      <span>Flag ROM when it falls more than</span>
+      <label><input id="thr_wnl" value="10" inputmode="decimal" aria-label="Percent below WNL"> % below WNL</label>
+      <label>or more than <input id="thr_bil" value="10" inputmode="decimal" aria-label="Percent side-to-side deficit"> % below the uninvolved side</label>
+    </div>
+    <div id="o_engine"></div>
+    <label class="f full o-move">Gross movement patterns and functional observations<span class="hint">Overhead squat, single-leg squat, step-down, gait, sport-specific movement, and so on.</span><textarea id="o_move" rows="3"></textarea></label>
+  </section>
+
+  <section class="soap" id="A" aria-labelledby="A_h">
+    <header><span class="letter" aria-hidden="true">A</span><div><h2 id="A_h">Assessment</h2><p>Name your impression. The draft below pulls from the evidence and stays editable.</p></div></header>
+    <div class="fields">
+      <label class="f w2">Clinical impression<select id="a_primary"></select></label>
+      <label class="f w2" id="a_other_wrap" hidden>Name the diagnosis<input id="a_other" autocomplete="off"></label>
+      <fieldset class="f w2"><legend>Confidence</legend>
+        <div class="seg" role="radiogroup" aria-label="Confidence">
+          <input type="radio" name="conf" id="cf_l" value="Low"><label for="cf_l">Low</label>
+          <input type="radio" name="conf" id="cf_m" value="Moderate" checked><label for="cf_m">Moderate</label>
+          <input type="radio" name="conf" id="cf_h" value="High"><label for="cf_h">High</label>
+        </div>
+      </fieldset>
+    </div>
+    <fieldset class="f full"><legend>Also considering</legend><div class="chips" id="a_secondary"><span class="note-s">Choose a body region first.</span></div></fieldset>
+    <label class="f full">Assessment<span class="hint" id="a_status" aria-live="polite">Drafts automatically from your findings until you edit it.</span><textarea id="a_text" rows="9"></textarea></label>
+    <div class="row"><button class="btn small" type="button" data-action="regen">Redraft from findings</button></div>
+  </section>
+
+  <section class="soap" id="P" aria-labelledby="P_h">
+    <header><span class="letter" aria-hidden="true">P</span><div><h2 id="P_h">Plan</h2><p>Treatment, activity status, referral, and communication.</p></div></header>
+    <div id="p_suggest" aria-live="polite"></div>
+    <div class="fields">
+      <fieldset class="f full"><legend>Activity status</legend>
+        <div class="seg" role="radiogroup" aria-label="Activity status">
+          <input type="radio" name="status" id="st_f" value="Full participation"><label for="st_f">Full participation</label>
+          <input type="radio" name="status" id="st_l" value="Limited participation"><label for="st_l">Limited participation</label>
+          <input type="radio" name="status" id="st_o" value="Out of participation"><label for="st_o">Out</label>
+          <input type="radio" name="status" id="st_p" value="Out pending physician evaluation"><label for="st_p">Out pending physician</label>
+        </div>
+      </fieldset>
+      <label class="f full">Restrictions or limitations<input id="p_restrict" autocomplete="off"></label>
+    </div>
+    <fieldset class="f full"><legend>Treatment provided today</legend><div class="chips" id="p_tx"></div></fieldset>
+    <div class="fields two">
+      <label class="f">Treatment details (parameters, taping, bracing, WB status)<textarea id="p_txd" rows="2"></textarea></label>
+      <label class="f">Therapeutic exercise program<select id="p_therex"></select></label>
+    </div>
+    <div class="fields">
+      <label class="f w2">Referral<select id="p_ref"></select></label>
+      <label class="f">Urgency<select id="p_urg"></select></label>
+    </div>
+    <fieldset class="f full" id="p_reasons_wrap" hidden><legend>Referral reason</legend><div class="chips" id="p_reasons"></div></fieldset>
+    <fieldset class="f full"><legend>Communication</legend><div class="chips" id="p_comm"></div></fieldset>
+    <div class="fields">
+      <label class="f">Follow-up date<input type="date" id="p_fu"></label>
+      <label class="f full">Plan notes<textarea id="p_notes" rows="3"></textarea></label>
+    </div>
+  </section>
 </main>
+<aside class="live" id="live" aria-live="polite" aria-label="Differential"></aside>
+</div>
+<p class="foot">Likelihood ratios and clinical prediction rules come from the cited literature; expert weights are reasoning weights, not published values. ROM norms are AAOS adult values and can be edited per row. This tool supports clinical reasoning and does not replace your evaluation.</p>
 </body>
 </html>
