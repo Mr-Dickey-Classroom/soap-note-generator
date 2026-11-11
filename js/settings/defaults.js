@@ -13,6 +13,12 @@ export const DEFAULTS = {
   clinicianCredentials: '',
   physicianName: '',
   emrName: 'Healthy Roster',
+  /** EMR output (SPEC §4, §6). */
+  emrCharLimit: 5000,
+  emrFormat: 'md',
+  emrLength: 'cond',
+  emrIncludeNeg: false,
+  pdfPointerText: 'Full evaluation (all ROM/MMT values, special tests including negatives, clusters and differential) in the attached PDF.',
   thrWnl: 10,
   thrBil: 10,
 

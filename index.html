@@ -16,12 +16,13 @@
     <p><span id="programLine">Sports Medicine</span>. Document the evaluation and let the differential build alongside you.</p>
   </div>
   <div class="mast-actions">
+    <button class="btn ghost" type="button" data-copy="header" id="copyHeadBtn">Copy EMR text</button>
     <button class="btn ghost" type="button" data-action="clear" id="clearBtn">New note</button>
   </div>
 </div></header>
 
 <nav class="nav" aria-label="Note sections"><div class="nav-in">
-  <a href="#enc">Encounter</a><a href="#S">S</a><a href="#O">O</a><a href="#A">A</a><a href="#P">P</a>
+  <a href="#enc">Encounter</a><a href="#S">S</a><a href="#O">O</a><a href="#A">A</a><a href="#P">P</a><a href="#OUT" id="navOut">EMR text</a>
   <span class="sp"></span><span class="pv">Nothing is saved. Reloading clears the note.</span>
 </div></nav>
 
@@ -170,6 +171,29 @@
       <label class="f">Follow-up date<input type="date" id="p_fu"></label>
       <label class="f full">Plan notes<textarea id="p_notes" rows="3"></textarea></label>
     </div>
+  </section>
+  <section class="soap" id="OUT" aria-labelledby="OUT_h">
+    <header><div><h2 id="OUT_h">EMR text</h2><p id="out_intro">The note formatted for pasting into your EMR. Condensed keeps the key findings and points to the attached PDF for the full evaluation. Non-tender areas and negative tests are left out unless you check the box. Edits made in this box are not saved back to the form.</p></div></header>
+    <div class="row">
+      <fieldset class="f inline"><legend class="note-s">Format</legend>
+        <div class="seg" role="radiogroup" aria-label="Text format">
+          <input type="radio" name="fmt" id="fm_md" value="md"><label for="fm_md">Formatted (Markdown)</label>
+          <input type="radio" name="fmt" id="fm_tx" value="txt"><label for="fm_tx">Plain text</label>
+        </div></fieldset>
+      <fieldset class="f inline"><legend class="note-s">Length</legend>
+        <div class="seg" role="radiogroup" aria-label="Note length">
+          <input type="radio" name="len" id="ln_c" value="cond"><label for="ln_c">Condensed (PDF attached)</label>
+          <input type="radio" name="len" id="ln_f" value="full"><label for="ln_f">Full</label>
+        </div></fieldset>
+    </div>
+    <div class="row">
+      <button class="btn primary" type="button" data-copy="panel" id="copyBtn">Copy EMR text</button>
+      <span id="charCount" class="note-s count" aria-live="polite"></span>
+      <label class="note-s inl">Limit <input id="hr_limit" inputmode="numeric" class="limit" aria-label="EMR character limit"></label>
+      <label class="note-s inl"><input type="checkbox" id="inc_neg"> Include non-tender areas and negative tests</label>
+      <span class="note-s" id="copyMsg" role="status" aria-live="polite"></span>
+    </div>
+    <div class="hrbox"><textarea id="out_all" aria-label="EMR text" spellcheck="false" rows="18"></textarea></div>
   </section>
 </main>
 <aside class="live" id="live" aria-live="polite" aria-label="Differential"></aside>

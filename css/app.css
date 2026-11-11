@@ -179,7 +179,15 @@ details.coach summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(-
 .coach-item.bad{background:var(--red-bg)}.coach-item.warn{background:var(--amber-bg)}
 .coach-item strong{display:block}
 
-/* Output */
+/* Output (EMR text) */
+fieldset.f.inline{flex-direction:row;align-items:center;gap:8px;border:0;padding:0;margin:0}
+fieldset.f.inline legend{float:left;margin:0 4px 0 0}
+.inl{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.inl input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand)}
+.limit{width:80px;padding:3px 6px;border:1px solid var(--line);border-radius:5px;background:var(--surface);text-align:right}
+.count.near{color:var(--amber)}
+.count.over{color:var(--red);font-weight:700}
+.hrbox textarea{width:100%;min-height:22rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86rem;line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);resize:vertical}
 .foot{max-width:1400px;margin:0 auto;padding:0 24px 40px;color:var(--muted);font-size:.85rem}
 
 .prior{display:none}

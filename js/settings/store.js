@@ -12,3 +12,6 @@ export function getSettings(){ return current; }
 
 /** Replace settings (used by tests and, later, the Settings screen). */
 export function setSettings(next){ current = { ...structuredClone(DEFAULTS), ...next }; }
+
+/** Merge a partial change into the current settings (e.g. the inline character limit). */
+export function updateSettings(patch){ current = { ...current, ...patch }; }

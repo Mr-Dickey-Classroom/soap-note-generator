@@ -15,7 +15,8 @@ export async function pressLabel(page, id){
 export async function fillCase(page, c){
   const set = (id, v) => page.locator(`#${id}`).fill(v);
   if (c.type) await page.selectOption('#e_type', c.type);
-  await set('e_eval', c.evaluator ?? '');
+  // Leave the evaluator alone when the case doesn't name one (it comes from Settings).
+  if ('evaluator' in c) await set('e_eval', c.evaluator ?? '');
   await set('e_doe', c.doe ?? '');
   await set('e_time', c.time ?? '');
   if (c.doi) await set('e_doi', c.doi);
@@ -37,6 +38,8 @@ export async function fillCase(page, c){
   for (const q of s.quality || []) await page.locator(`#s_quality input[value="${q}"]`).check();
   if (s.agg) await set('s_agg', s.agg);
   if (s.ease) await set('s_ease', s.ease);
+  if (s.prior) await set('s_prior', s.prior);
+  if (s.func) await set('s_func', s.func);
   for (const [k, state] of Object.entries(c.states || {})){
     for (const [fid, v] of Object.entries(state)){
       if (v === true) await page.locator(`input[data-reg="${k}"][data-fid="${fid}"]`).check();
@@ -45,12 +48,18 @@ export async function fillCase(page, c){
   }
   for (const [key, v] of Object.entries(c.rom || {})){
     const sel = `[data-rom="${key}"]`;
-    if (v === true) await page.locator(sel).check(); else await page.locator(sel).fill(v);
+    if (v === true) await page.locator(sel).check();
+    else if (await page.locator(sel).evaluate(e => e.tagName === 'SELECT')) await page.selectOption(sel, v);
+    else await page.locator(sel).fill(v);
   }
   for (const [key, v] of Object.entries(c.mmt || {})){
     const sel = `[data-mmt="${key}"]`;
-    if (v === true) await page.locator(sel).check(); else await page.selectOption(sel, v);
+    if (v === true) await page.locator(sel).check();
+    else if (await page.locator(sel).evaluate(e => e.tagName === 'SELECT')) await page.selectOption(sel, v);
+    else await page.locator(sel).fill(v);
   }
+  for (const [key, v] of Object.entries(c.notes || {})) await page.locator(`[data-note="${key}"]`).fill(v);
+  if (c.oMove) await set('o_move', c.oMove);
   if (c.primary) await page.selectOption('#a_primary', c.primary);
   if (c.conf) await pressLabel(page, { Low:'cf_l', Moderate:'cf_m', High:'cf_h' }[c.conf]);
   for (const sec of c.secondary || []) await page.locator(`#a_secondary input[value="${sec}"]`).check();
@@ -60,7 +69,11 @@ export async function fillCase(page, c){
   for (const t of p.tx || []) await page.locator(`#p_tx input[value="${t}"]`).check();
   if (p.ref) await page.selectOption('#p_ref', p.ref);
   if (p.urg) await page.selectOption('#p_urg', p.urg);
+  for (const r of p.reasons || []) await page.locator(`#p_reasons input[value="${r}"]`).check();
+  for (const m of p.comm || []) await page.locator(`#p_comm input[value="${m}"]`).check();
+  if (p.txd) await set('p_txd', p.txd);
   if (p.fu) await set('p_fu', p.fu);
+  if (p.notes) await set('p_notes', p.notes);
 }
 
 /** The two fixture cases from tests/fixtures/README.md. */

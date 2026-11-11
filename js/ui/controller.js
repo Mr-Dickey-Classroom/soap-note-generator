@@ -14,11 +14,12 @@ import { engineHTML, noteHTML, evidenceHTML } from './engine-form.js';
 import { romHTML, mmtHTML, romRowHTML, mmtRowHTML, refreshRomRow, refreshMmtRow } from './rom-mmt.js';
 import { renderPanel } from './panel.js';
 import { renderPlanLists, renderReasons, renderPlanPrompts } from './plan.js';
+import { applyOutputLabels, applyOutputDefaults, renderOutput, renderCount, onLimitInput, copyOutput } from './output.js';
 
 const model = createModel();
 let timer = null;
 let clearArmed = null;
-/** Most recent analyses and note snapshot (for tests and, later, outputs). */
+/** Most recent analyses and note snapshot (for tests and the outputs). */
 export const last = { AS: [], note: null, errors: [] };
 
 const DRAFT_HINT = 'Drafts automatically from your findings until you edit it.';
@@ -98,10 +99,19 @@ export function update(){
   renderPanel($('#live'), AS, note, measureCtx(note), settings);
   renderPlanPrompts($('#p_suggest'), AS, model.states, note.plan.ref, settings);
   if (!model.assessEdited) $('#a_text').value = draftAssessment(note, AS);
+  note.assess.text = $('#a_text').value.trim();
+  renderOutput(note, AS);
 }
 
 function onField(e){
   const t = e.target;
+  // Output controls only regenerate or recount the text; they are not note content.
+  if (t.closest('#OUT')){
+    if (t.name === 'fmt' || t.name === 'len' || t.id === 'inc_neg') update();
+    else if (t.id === 'hr_limit') onLimitInput();
+    else if (t.id === 'out_all') renderCount();
+    return;
+  }
   if (t.dataset.fid){
     const k = t.dataset.reg;
     const cleared = setFinding(model, k, t.dataset.fid, t.checked);
@@ -148,6 +158,8 @@ function onClick(e){
     if (row){ row.scrollIntoView({block:'center'}); row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash'); const r0 = row.querySelector('input[value="pos"]'); if (r0) r0.focus({preventScroll:true}); }
     return;
   }
+  const c = e.target.closest('[data-copy]');
+  if (c){ copyNote(c); return; }
   const a = e.target.closest('[data-action]');
   if (!a) return;
   const act = a.dataset.action;
@@ -160,6 +172,18 @@ function onClick(e){
   }
 }
 
+let copyReset = null;
+/** Copy the EMR text (header or panel button); the header button confirms on itself. */
+async function copyNote(btn){
+  update();
+  const r = await copyOutput();
+  if (btn.dataset.copy === 'header' && r === 'copied'){
+    const label = `Copy for ${(getSettings().emrName || '').trim() || 'EMR'}`;
+    btn.textContent = 'Copied';
+    clearTimeout(copyReset); copyReset = setTimeout(() => { btn.textContent = label; }, 2500);
+  }
+}
+
 /** Defaults for a fresh note: evaluation date and time now, evaluator and thresholds from Settings. */
 function applyNoteDefaults(){
   const s = getSettings();
@@ -169,6 +193,7 @@ function applyNoteDefaults(){
   $('#thr_wnl').value = String(s.thrWnl);
   $('#thr_bil').value = String(s.thrBil);
   $('#cf_m').checked = true;
+  applyOutputDefaults(s);
 }
 
 /** Erase the note (two-click confirm in the header). */
@@ -193,6 +218,7 @@ export function initNote(){
   $$('select.pain').forEach(x => x.innerHTML = '<option value=""></option>' + Array.from({length:11}, (_, i) => `<option>${i}</option>`).join(''));
   $('#s_quality').innerHTML = chipList(s.painQuality);
   renderPlanLists(s);
+  applyOutputLabels(s);
   applyNoteDefaults();
   syncReeval();
   buildRegions(); update();
