@@ -6,6 +6,7 @@
 import { REG, ORDER, impressionOptions } from '../engine/registry.js';
 import { getSettings } from '../settings/store.js';
 import { evaluatorLine } from '../settings/defaults.js';
+import { ROMDEF } from '../engine/measures.js';
 import { today, nowTime } from '../output/format.js';
 import { draftAssessment } from '../output/assessment-draft.js';
 import { $, $$, esc, chipList, checkedIn } from './dom.js';
@@ -29,7 +30,7 @@ function ctxNow(){ return measureCtx(collectNote(model)); }
 /** Rebuild the Subjective and Objective engine sections and the impression lists (prototype buildRegions). */
 function buildRegions(){
   const rs = selectedRegions();
-  rs.forEach(k => ensureRegion(model, k));
+  rs.forEach(k => ensureRegion(model, k, getSettings().romNorms));
   const sHost = $('#s_engine'), oHost = $('#o_engine');
   const ctx = ctxNow();
   if (!rs.length){
@@ -182,6 +183,44 @@ export function clearAll(){
   syncReeval();
   buildRegions(); renderReasons(getSettings()); update();
   window.scrollTo(0, 0);
+}
+
+/** Effective WNL for a default ROM motion under the given settings. */
+function normFor(s, k, m){
+  const ov = (s.romNorms || {})[k] || {};
+  const d = (ROMDEF[k].find(r => r[0] === m) || [])[1];
+  return String(ov[m] ?? d);
+}
+
+/**
+ * Carry a settings change into the open note without overwriting what the
+ * clinician typed: defaults (evaluator, thresholds, WNL values) change only
+ * where the field still holds the previous default. Lists keep selections.
+ * @param {object} next new settings
+ * @param {object} prev previous settings
+ */
+export function applySettingsToNote(next, prev){
+  const ev = $('#e_eval');
+  if (ev.value.trim() === evaluatorLine(prev)) ev.value = evaluatorLine(next);
+  let flags = false;
+  for (const [id, key] of [['thr_wnl', 'thrWnl'], ['thr_bil', 'thrBil']]){
+    const el = $('#' + id);
+    if (el.value.trim() === String(prev[key]) && prev[key] !== next[key]){ el.value = String(next[key]); flags = true; }
+  }
+  if (JSON.stringify(prev.romNorms) !== JSON.stringify(next.romNorms)){
+    let changed = false;
+    for (const k of Object.keys(model.rom)){
+      for (const r of model.rom[k]){
+        if (r.custom) continue;
+        const was = normFor(prev, k, r.m), now = normFor(next, k, r.m);
+        if (was !== now && String(r.norm).trim() === was){ r.norm = now; changed = true; }
+      }
+    }
+    if (changed) buildRegions();
+  }
+  if (flags) refreshFlagsAll();
+  renderPlanLists(next);
+  update();
 }
 
 /** Boot the Note screen. */

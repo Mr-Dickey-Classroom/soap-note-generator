@@ -5,21 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'">
 <meta name="description" content="Document an athletic training injury evaluation in SOAP format with a live, evidence-based differential.">
+<meta name="theme-color" content="#006428">
 <title>SOAP Note Generator</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/app.css">
 <script type="module" src="js/main.js"></script>
 </head>
 <body>
 <header class="mast"><div class="mast-in">
-  <div>
-    <h1 id="appTitle">SOAP Note Generator</h1>
-    <p><span id="programLine">Sports Medicine</span>. Document the evaluation and let the differential build alongside you.</p>
+  <div class="brand">
+    <img id="appLogo" class="logo" alt="" hidden>
+    <div>
+      <h1 id="appTitle">SOAP Note Generator</h1>
+      <p><span id="programLine">Sports Medicine</span>. Document the evaluation and let the differential build alongside you.</p>
+    </div>
   </div>
   <div class="mast-actions">
     <button class="btn ghost" type="button" data-action="clear" id="clearBtn">New note</button>
+    <button class="btn ghost" type="button" data-view="settings" id="settingsBtn">Settings</button>
   </div>
 </div></header>
 
+<div id="view-note">
 <nav class="nav" aria-label="Note sections"><div class="nav-in">
   <a href="#enc">Encounter</a><a href="#S">S</a><a href="#O">O</a><a href="#A">A</a><a href="#P">P</a>
   <span class="sp"></span><span class="pv">Nothing is saved. Reloading clears the note.</span>
@@ -175,5 +182,15 @@
 <aside class="live" id="live" aria-live="polite" aria-label="Differential"></aside>
 </div>
 <p class="foot">Likelihood ratios and clinical prediction rules come from the cited literature; expert weights are reasoning weights, not published values. ROM norms are AAOS adult values and can be edited per row. This tool supports clinical reasoning and does not replace your evaluation.</p>
+</div>
+
+<div id="view-settings" class="settings" hidden>
+  <div class="set-head">
+    <div><h2 id="settings_h" tabindex="-1">Settings</h2><p class="hint">Saved automatically in this browser only. Settings never contain patient data.</p></div>
+    <button class="btn" type="button" data-view="note">Back to note</button>
+  </div>
+  <p id="set_status" class="set-status" role="status" aria-live="polite"></p>
+  <div id="settingsForm"></div>
+</div>
 </body>
 </html>

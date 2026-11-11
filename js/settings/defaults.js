@@ -1,20 +1,51 @@
 /**
- * Default settings. Generic on purpose: no school, clinician, physician, or EMR
- * names beyond the generic defaults the SPEC names. Phase 3 makes every value
- * editable in Settings and persists it locally; until then these are used as-is.
+ * Default settings (SPEC §6). Generic on purpose: no school, clinician, physician,
+ * or EMR names beyond the generic defaults the SPEC names. Every value is
+ * editable on the Settings screen and stored locally (js/settings/store.js).
+ * Settings never contain patient data.
  */
 
 /** @typedef {typeof DEFAULTS} Settings */
 export const DEFAULTS = {
+  /* Branding */
   appTitle: 'SOAP Note Generator',
   orgName: '',
   programLine: 'Sports Medicine',
+  /** PNG data URL (≤ 512 px, ≤ 300 KB) or ''. Stored in IndexedDB, not localStorage. */
+  logo: '',
+  brandColor: '#006428',
+  accentColor: '#F0DC3C',
+  /** 'system' | 'light' | 'dark' */
+  theme: 'system',
+
+  /* Clinician */
   clinicianName: '',
   clinicianCredentials: '',
-  physicianName: '',
-  emrName: 'Healthy Roster',
+  licenseNumber: '',
+
+  /* Clinical */
   thrWnl: 10,
   thrBil: 10,
+  /** ROM norm overrides: { region: { motion: degrees } }. Empty = AAOS defaults. */
+  romNorms: {},
+  physicianName: '',
+
+  /* EMR output (used by the Output panel, Phase 4) */
+  emrName: 'Healthy Roster',
+  charLimit: 5000,
+  /** 'markdown' | 'plain' */
+  emrFormat: 'markdown',
+  /** 'condensed' | 'full' */
+  emrLength: 'condensed',
+  includeNegatives: false,
+  pdfPointer: 'Full evaluation (all ROM/MMT values, special tests including negatives, clusters and differential) in the attached PDF.',
+
+  /* PDF (used by the PDF builder, Phase 5) */
+  /** 'Letter' | 'A4' */
+  paperSize: 'Letter',
+  filenamePattern: 'SOAP_{type}_{last}_{first}_{date}',
+  footerText: 'Confidential health record. Do not redisclose without authorization.',
+  showSignature: true,
 
   /** Pain quality chips (clinical vocabulary, same as the prototype). */
   painQuality: ['Sharp','Dull or aching','Burning','Throbbing','Shooting or radiating','Numbness or tingling','Stiffness','Catching or locking','Instability or giving way'],

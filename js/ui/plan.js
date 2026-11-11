@@ -16,7 +16,10 @@ export function renderPlanLists(settings){
   therex.value = [...therex.options].some(o => o.value === t0) ? t0 : '';
   const ref = document.getElementById('p_ref'); const r0 = ref.value;
   ref.innerHTML = '<option value="">No referral</option>' + settings.referralDestinations.map(d => { const l = referralLabel(d, settings); return `<option value="${esc(l)}">${esc(l)}</option>`; }).join('');
-  ref.value = [...ref.options].some(o => o.value === r0) ? r0 : '';
+  // A chosen "Directing physician (...)" survives a change to the physician name.
+  const dp = referralLabel('Directing physician', settings);
+  const r1 = /^Directing physician( \(.*\))?$/.test(r0) ? dp : r0;
+  ref.value = [...ref.options].some(o => o.value === r1) ? r1 : '';
   const urg = document.getElementById('p_urg'); const u0 = urg.value;
   urg.innerHTML = '<option value=""></option>' + settings.referralUrgency.map(u => `<option>${esc(u)}</option>`).join('');
   urg.value = [...urg.options].some(o => o.value === u0) ? u0 : '';
